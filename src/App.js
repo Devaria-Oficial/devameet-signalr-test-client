@@ -5,6 +5,8 @@ import { Room } from './components/Room';
 function App() {
   const [data, setData] = useState('');
 
+  console.log('App beeing rendered')
+
   return (
     <div className="App">
       <div className="Main">

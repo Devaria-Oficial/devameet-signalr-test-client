@@ -7,6 +7,7 @@ import { UserPosition } from "./UserPosition";
 export const Room = ({ data }) => {
     const localVideoRef = useRef();
 
+    console.log('Rendering Room', data)
     const userMediaStream = useCreateMediaStream(localVideoRef);
     const { connectedUsers, peerVideoConnection } = useWebSocket(data, userMediaStream);
 
@@ -14,8 +15,9 @@ export const Room = ({ data }) => {
     const others = connectedUsers.filter(e => e.user !== data.user);
 
     console.log('others', others);
+    console.log('User', data.user);
 
-    const doMove = (direction) => {
+    const doMove = async (direction) => {
         let payload = {
             userId: data.user,
             link: data.link,
@@ -25,25 +27,27 @@ export const Room = ({ data }) => {
                 payload.x = myPosition.x > 1 ? myPosition.x - 1 : 1;
                 payload.orientation = 'left';
                 payload.y = myPosition.y;
-                peerVideoConnection.updateUserMovement(payload);
+                await peerVideoConnection.updateUserMovement(payload);
                 break;
             case 'right':
                 payload.x = myPosition.x < 8 ? myPosition.x + 1 : 8;
                 payload.orientation = 'right';
                 payload.y = myPosition.y;
-                peerVideoConnection.updateUserMovement(payload);
+                await peerVideoConnection.updateUserMovement(payload);
                 break;
             case 'up':
+                console.log(connectedUsers)
+                console.log(myPosition)
                 payload.x = myPosition.x;
-                payload.orientation = 'back';
+                payload.orientation = 'up';
                 payload.y = myPosition.y > 1 ? myPosition.y - 1 : 1;
-                peerVideoConnection.updateUserMovement(payload);
+                await peerVideoConnection.updateUserMovement(payload);
                 break;
             case 'down':
                 payload.x = myPosition.x;
-                payload.orientation = 'front';
+                payload.orientation = 'down';
                 payload.y = myPosition.y < 8 ? myPosition.y + 1 : 8;
-                peerVideoConnection.updateUserMovement(payload);
+                await peerVideoConnection.updateUserMovement(payload);
                 break;
             default:
                 break;
